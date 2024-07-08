@@ -1,6 +1,6 @@
-import './App.css'
 import React, { useEffect, useState } from 'react';
-import { collection, doc, addDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, addDoc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
+import './App.css';
 
 function App({ firestore }) {
     const [callId, setCallId] = useState('');
@@ -54,7 +54,7 @@ function App({ firestore }) {
             const offerDescription = await pc.createOffer();
             await pc.setLocalDescription(offerDescription);
 
-            await callDocRef.update({ offer: offerDescription });
+            await updateDoc(callDocRef, { offer: offerDescription });
 
             onSnapshot(callDocRef, snapshot => {
                 const data = snapshot.data();
@@ -91,7 +91,7 @@ function App({ firestore }) {
                 await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
                 const answerDescription = await pc.createAnswer();
                 await pc.setLocalDescription(answerDescription);
-                await callDocRef.update({ answer: answerDescription });
+                await updateDoc(callDocRef, { answer: answerDescription });
             }
 
             onSnapshot(offerCandidatesRef, snapshot => {
@@ -108,6 +108,8 @@ function App({ firestore }) {
         callButton.onclick = createOffer;
         answerButton.onclick = answerCall;
     }, [firestore, pc]);
+
+    return null; // 필요시 추가 UI 요소를 여기에 추가하세요.
 }
 
 export default App;
